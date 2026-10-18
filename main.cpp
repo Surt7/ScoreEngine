@@ -1,42 +1,29 @@
 #include <iostream>
 #include <cstdint>
 
-#include "ScoreEngine.h"
+#include "core/GameSession.h"
+#include "display/ConsoleDisplay.h"
+#include "include/parser/EventParser.h"
+#include "include/rules/Rules.h"
+#include "include/core/ScoreEngine.h"
 
 
 int main() {
-    ScoreEngine engine;
-
+    GameSession session;
+    session.init();
     // start
 
-    const Event e1{
-        .sequence_id = 1,
-        .switch_code = "START_BUTTON",
-        .timestamp_ns = 1000,
-        .signature = "VALID_SECRET"
+    const std::vector<std::string_view> messages = {
+        "1;START_BUTTON;1000;VALID_SECRET",
+        "2;BUMPER_1;2000;VALID_SECRET",
+        "2;BUMPER_1;2000;VALID_SECRET",
+        "3;BUMPER_2;3000;VALID_SECRET",
+        "TRAME_CORROMPUE_SANS_SEPARATEUR"
     };
 
-    // bumper hit
-    const auto res1 = engine.process_event(e1);
-    std::cout << "[Event 1] Action: " << to_string(res1.action)
-            << "| Score: " << res1.total_score << std::endl;
+    session.process_batch(messages);
+    session.display_summary();
 
-
-    const Event e2{
-        .sequence_id = 2,
-        .switch_code = "BUMPER_1",
-        .timestamp_ns = 2000,
-        .signature = "VALID_SECRET"
-    };
-
-    const auto res_replay = engine.process_event(e2);
-    std::cout << "[Rejeu bloque !] Action: " << to_string(res_replay.action)
-            << " | Score: " << res_replay.total_score << std::endl;
-
-    // replay attack
-    const auto res3 = engine.process_event(e2);
-    std::cout << "[Event 3 - Rejeu] Action: " << to_string(res3.action)
-            << " | Score: " << res3.total_score << std::endl;
-
+    
     return 0;
 }

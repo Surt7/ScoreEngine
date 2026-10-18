@@ -1,4 +1,4 @@
-#include "ScoreEngine.h"
+#include "../../include/core/ScoreEngine.h"
 
 EngineResult ScoreEngine::process_event(const Event &event) {
     // check anti replay
@@ -45,7 +45,7 @@ EngineResult ScoreEngine::process_event(const Event &event) {
             .sequence_id = event.sequence_id,
             .score_delta = 0,
             .total_score = total_score_,
-            .action = GameAction::None
+            .action = GameAction::UnknownSwitch
         };
     }
 

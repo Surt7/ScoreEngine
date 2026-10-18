@@ -1,5 +1,5 @@
 #pragma once
-#include "Event.h"
+#include "../core/Event.h"
 
 struct RuleEffect {
     int32_t score_delta{0};

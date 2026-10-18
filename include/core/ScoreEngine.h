@@ -1,6 +1,6 @@
 #pragma once
 #include "Event.h"
-#include "IRule.h"
+#include "../rules/IRule.h"
 #include <vector>
 #include <memory>
 
@@ -13,6 +13,13 @@ public:
     ~ScoreEngine() = default;
 
     void add_rule(std::unique_ptr<IRule> rule);
+
+    [[nodiscard]] int64_t total_score() const { return total_score_; }
+    
+    template<typename T, typename... Args>
+    void add_rule(Args &&... args) {
+        rules_.push_back(std::make_unique<T>(std::forward<Args>(args)...));
+    }
 
 private:
     int64_t total_score_{0};
