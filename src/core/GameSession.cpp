@@ -31,3 +31,9 @@ void GameSession::display_summary() const {
     std::cout << "Score Total Final  : " << engine_.total_score() << " pts\n";
     std::cout << "==============================\n";
 }
+
+void GameSession::display_json_history() const {
+    for (const auto &res: history_) {
+        ConsoleDisplay::show_json_result(res);
+    }
+}

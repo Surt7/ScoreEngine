@@ -1,6 +1,6 @@
 #include "../../include/parser/EventParser.h"
 #include <charconv>
-
+#include <nlohmann/json.hpp>
 
 std::optional<Event> EventParser::parse(std::string_view raw_line) {
     if (raw_line.empty()) {
@@ -23,14 +23,14 @@ std::optional<Event> EventParser::parse(std::string_view raw_line) {
     const auto sig_str = raw_line.substr(pos3 + 1);
 
     uint64_t seq_id{0};
-    auto [ptr_seq, ec_seq] = std::from_chars(seq_str.data(), seq_str.data() + seq_str.size(), seq_id);
-    if (ec_seq != std::errc{}) {
+    if (auto [ptr_seq, ec_seq] = std::from_chars(seq_str.data(), seq_str.data() + seq_str.size(), seq_id);
+        ec_seq != std::errc{}) {
         return std::nullopt;
     }
 
     int64_t timestamp{0};
-    auto [ptr_timestamp, ec_timestamp] = std::from_chars(time_str.data(), time_str.data() + time_str.size(), timestamp);
-    if (ec_timestamp != std::errc{}) {
+    if (auto [ptr_timestamp, ec_timestamp] = std::from_chars(time_str.data(), time_str.data() + time_str.size(),
+                                                             timestamp); ec_timestamp != std::errc{}) {
         return std::nullopt;
     }
 
@@ -41,5 +41,16 @@ std::optional<Event> EventParser::parse(std::string_view raw_line) {
         .timestamp_ns = timestamp,
         .signature = std::string(sig_str)
     };
+}
+
+std::string EventParser::serialize_result(const EngineResult &result) {
+    nlohmann::json j = {
+        {"sequence_id", result.sequence_id},
+        {"score_delta", result.score_delta},
+        {"total_score", result.total_score},
+        {"action", to_string(result.action)}
+    };
+
+    return j.dump();
 }
 

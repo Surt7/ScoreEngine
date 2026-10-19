@@ -1,5 +1,7 @@
 cmake-build-*/
 .idea/
+build/
+CMakeUserPresets.json
 *.exe
 *.obj
 *.o

@@ -17,6 +17,10 @@ public:
     // display final score , stats ...
     void display_summary() const;
 
+    [[nodiscard]] const std::vector<EngineResult> &history() const { return history_; }
+
+    void display_json_history() const;
+
 private :
     ScoreEngine engine_;
     std::vector<EngineResult> history_;

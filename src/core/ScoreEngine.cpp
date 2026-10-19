@@ -7,7 +7,7 @@ EngineResult ScoreEngine::process_event(const Event &event) {
             .status = EngineStatus::RejectedReplay,
             .sequence_id = event.sequence_id,
             .score_delta = 0,
-            .total_score = total_score_,
+            .total_score = total_score_.value(),
             .action = GameAction::RejectedReplay
         };
     }
@@ -44,14 +44,14 @@ EngineResult ScoreEngine::process_event(const Event &event) {
             .status = EngineStatus::RejectedUnknownSwitch,
             .sequence_id = event.sequence_id,
             .score_delta = 0,
-            .total_score = total_score_,
+            .total_score = total_score_.value(),
             .action = GameAction::UnknownSwitch
         };
     }
 
 
-    if (action == GameAction::RejectedReplay) {
-        total_score_ = 0;
+    if (action == GameAction::GameStart) {
+        total_score_.reset();
     } else {
         total_score_ += score_delta;
     }
