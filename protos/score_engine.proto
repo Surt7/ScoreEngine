@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package scoreengine;
+
+option csharp_namespace = "ScoreEngine.Gatekeeper.Grpc";
+
+service ScoreService {
+
+  rpc ProcessEvent(ScoreEventRequest) returns (ScoreEventReply);
+}
+
+message ScoreEventRequest{
+  uint64 sequence_id = 1;
+  string switch_code = 2;
+  int64 timestamp_ns = 3;
+  string signature = 4;
+}
+
+message ScoreEventReply{
+  string status = 1;         // "Accepted", "RejectedReplay", etc.
+  uint64 sequence_id = 2;
+  int32 score_delta = 3;
+  int64 total_score = 4;
+  string action = 5; // "GameStart", "BumperHit", etc.
+}
