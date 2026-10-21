@@ -1,31 +1,36 @@
 #include <iostream>
-#include <cstdint>
 #include <nlohmann/json.hpp>
-
 #include "core/GameSession.h"
-#include "display/ConsoleDisplay.h"
-#include "include/parser/EventParser.h"
-#include "include/rules/Rules.h"
-#include "include/core/ScoreEngine.h"
+#include "grpc/ScoreServiceImpl.h"
+#include <grpcpp/grpcpp.h>
+#include <memory>
 
 
 int main() {
     GameSession session;
     session.init();
-    // start
 
-    const std::vector<std::string_view> messages = {
-        "1;START_BUTTON;1000;VALID_SECRET",
-        "2;BUMPER_1;2000;VALID_SECRET",
-        "2;BUMPER_1;2000;VALID_SECRET",
-        "3;BUMPER_1;3000;VALID_SECRET",
-        "1;BUMPER_1;3000;VALID_SECRET",
-        "4;BUMPER_1;4000;VALID_SECRET",
-        "TRAME_CORROMPUE_SANS_SEPARATEUR"
-    };
+    ScoreServiceImpl service(session.engine());
 
-    session.process_batch(messages);
+
+    const std::string server_address = "0.0.0.0:50051";
+
+    grpc::ServerBuilder builder;
+
+    builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+    builder.RegisterService(&service);
+
+
+    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+    std::cout << "=== ScoreEngine gRPC ecoute sur " << server_address << " ===\n";
+
+
+    std::cout << "ScoreEngine pret. Appuyez sur Entree pour arreter et voir le bilan...\n";
+    std::cin.get();
+
+    server->Shutdown();
+    
     session.display_summary();
-    session.display_json_history();
+
     return 0;
 }

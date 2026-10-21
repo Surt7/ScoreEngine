@@ -19,7 +19,12 @@ public:
 
     [[nodiscard]] const std::vector<EngineResult> &history() const { return history_; }
 
+    [[nodiscard]] ScoreEngine &engine() { return engine_; }
+
+
     void display_json_history() const;
+
+    EngineResult process_event(const Event &event);
 
 private :
     ScoreEngine engine_;

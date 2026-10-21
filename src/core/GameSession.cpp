@@ -37,3 +37,9 @@ void GameSession::display_json_history() const {
         ConsoleDisplay::show_json_result(res);
     }
 }
+
+EngineResult GameSession::process_event(const Event &event) {
+    auto result = engine_.process_event(event);
+    history_.push_back(result);
+    return result;
+}

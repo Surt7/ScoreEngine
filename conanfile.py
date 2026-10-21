@@ -15,3 +15,5 @@ class ScoreEngineConan(ConanFile):
 
     def requirements(self):
         self.requires("nlohmann_json/3.11.3")
+        self.requires("protobuf/6.33.5")
+        self.requires("grpc/1.78.1")
